@@ -5,26 +5,48 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CourseLibrary.API.Services;
+using CourseLibrary.API.Models;
+using AutoMapper;
 
 namespace CourseLibrary.API.Controllers
 {
 
     [ApiController]
+    [Route("api/authors")]
+
     public class AuthorsController : ControllerBase
     {
         private readonly ICourseLibraryRepository _courseLibraryRepository;
+        private readonly IMapper _mapper;
 
-        public AuthorsController(ICourseLibraryRepository courseLibraryRepository)
+        public AuthorsController(ICourseLibraryRepository courseLibraryRepository, IMapper mapper)
         {
             _courseLibraryRepository = courseLibraryRepository ??
                 throw new ArgumentNullException(nameof(courseLibraryRepository));
+
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpGet("api/authors")]
-        public IActionResult GetAuthors()
+        [HttpGet()]
+        public ActionResult<IEnumerable<AuthorDto>> GetAuthors()
         {
             var authorsFromRepo = _courseLibraryRepository.GetAuthors();
-            return new JsonResult(authorsFromRepo);
+            return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
+        }
+
+
+        [HttpGet("{authorId}")]
+        public IActionResult GetAuthor(Guid authorId)
+        {
+            var authorFromRepo = _courseLibraryRepository.GetAuthor(authorId);
+
+            if (authorFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            return  Ok(_mapper.Map<AuthorDto>(authorFromRepo));
         }
     }
 }
