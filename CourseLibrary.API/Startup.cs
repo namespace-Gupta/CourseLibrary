@@ -42,7 +42,17 @@ namespace CourseLibrary.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                    {
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An unexpected fault happened. Which shouldn't have, yet here we are!...........Run to the nearest Fire Exit.");
+                    });
+                });
+            }
             app.UseRouting();
 
             app.UseAuthorization();
