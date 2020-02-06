@@ -46,7 +46,7 @@ namespace CourseLibrary.API.Controllers
             if (authorFromRepo == null)
             {
                 return NotFound();
-            }
+            }  
 
             return  Ok(_mapper.Map<AuthorDto>(authorFromRepo));
         }
@@ -58,6 +58,7 @@ namespace CourseLibrary.API.Controllers
             var authorEntity = _mapper.Map<Author>(author);
             _courseLibraryRepository.AddAuthor(authorEntity);
             _courseLibraryRepository.Save();
+
             var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
 
             return CreatedAtRoute(  "GetAuthor",
