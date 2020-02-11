@@ -9,6 +9,7 @@ using CourseLibrary.API.Models;
 using AutoMapper;
 using CourseLibrary.API.ResourceParameters;
 using CourseLibrary.API.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace CourseLibrary.API.Controllers
 {
@@ -65,5 +66,7 @@ namespace CourseLibrary.API.Controllers
                                     new { authorId = authorToReturn.Id },
                                     authorToReturn);
         }
+
+
     }
 }
