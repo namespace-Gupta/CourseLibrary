@@ -52,8 +52,8 @@ namespace CourseLibrary.API.Controllers
                 pageSize = authorsFromRepo.PageSize,
                 currentPage = authorsFromRepo.Currentpage,
                 totalPages = authorsFromRepo.TotalPages,
-                previousPageLink = previousPageLink,
-                nextPageLink = nextPageLink
+                previousPageLink,
+                nextPageLink
 
             };
 

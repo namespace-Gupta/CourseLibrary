@@ -9,6 +9,7 @@ using System.Linq;
 namespace CourseLibrary.API.Services
 {
     public class 
+        
         CourseLibraryRepository : ICourseLibraryRepository, IDisposable
     {
         private readonly CourseLibraryContext _context;
@@ -147,6 +148,14 @@ namespace CourseLibrary.API.Services
                 collection = collection.Where(a => a.MainCategory.Contains(searchQuery)
                                                 || a.FirstName.Contains(searchQuery)
                                                 || a.LastName.Contains(searchQuery));
+            }
+
+            if(!string.IsNullOrWhiteSpace(authorsResourceParameters.OrderBy))
+            {
+                if(authorsResourceParameters.OrderBy.ToLowerInvariant() == "name")
+                {
+                    collection = collection.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
+                }
             }
 
             return PagedList<Author>.Create(collection, authorsResourceParameters.PageNumber, authorsResourceParameters.PageSize);
