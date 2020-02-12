@@ -129,4 +129,5 @@ C:\RestAPI\CourseLibrary\CourseLibrary.API\bin\Debug\netcoreapp3.0\AutoMapper.Ex
 C:\RestAPI\CourseLibrary\CourseLibrary.API\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\RestAPI\CourseLibrary\CourseLibrary.API\bin\Debug\netcoreapp3.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\RestAPI\CourseLibrary\CourseLibrary.API\bin\Debug\netcoreapp3.0\Newtonsoft.Json.Bson.dll
+C:\RestAPI\CourseLibrary\CourseLibrary.API\bin\Debug\netcoreapp3.0\System.Linq.Dynamic.Core.dll
 C:\RestAPI\CourseLibrary\CourseLibrary.API\obj\Debug\netcoreapp3.0\CourseLibrary.API.MvcApplicationPartsAssemblyInfo.cache

@@ -8,15 +8,17 @@ using System.Linq;
 
 namespace CourseLibrary.API.Services
 {
-    public class 
-        
-        CourseLibraryRepository : ICourseLibraryRepository, IDisposable
+    public class CourseLibraryRepository : ICourseLibraryRepository, IDisposable
     {
         private readonly CourseLibraryContext _context;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public CourseLibraryRepository(CourseLibraryContext context )
+        public CourseLibraryRepository(CourseLibraryContext context,
+            IPropertyMappingService propertyMappingService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _propertyMappingService = propertyMappingService ??
+                throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public void AddCourse(Guid authorId, Course course)
@@ -32,19 +34,19 @@ namespace CourseLibrary.API.Services
             }
             // always set the AuthorId to the passed-in authorId
             course.AuthorId = authorId;
-            _context.Courses.Add(course); 
-        }         
+            _context.Courses.Add(course);
+        }
 
         public void DeleteCourse(Course course)
         {
             _context.Courses.Remove(course);
         }
-  
+
         public Course GetCourse(Guid authorId, Guid courseId)
         {
             if (authorId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(authorId));       
+                throw new ArgumentNullException(nameof(authorId));
             }
 
             if (courseId == Guid.Empty)
@@ -110,7 +112,7 @@ namespace CourseLibrary.API.Services
 
             _context.Authors.Remove(author);
         }
-        
+
         public Author GetAuthor(Guid authorId)
         {
             if (authorId == Guid.Empty)
@@ -128,37 +130,41 @@ namespace CourseLibrary.API.Services
 
         public PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
-            if(authorsResourceParameters == null)
+            if (authorsResourceParameters == null)
             {
                 throw new ArgumentNullException(nameof(authorsResourceParameters));
             }
 
-
             var collection = _context.Authors as IQueryable<Author>;
 
-            if(!string.IsNullOrWhiteSpace(authorsResourceParameters.MainCategory))
+            if (!string.IsNullOrWhiteSpace(authorsResourceParameters.MainCategory))
             {
                 var mainCategory = authorsResourceParameters.MainCategory.Trim();
                 collection = collection.Where(a => a.MainCategory == mainCategory);
             }
-           
-            if(!string.IsNullOrWhiteSpace(authorsResourceParameters.SearchQuery))
+
+            if (!string.IsNullOrWhiteSpace(authorsResourceParameters.SearchQuery))
             {
+
                 var searchQuery = authorsResourceParameters.SearchQuery.Trim();
                 collection = collection.Where(a => a.MainCategory.Contains(searchQuery)
-                                                || a.FirstName.Contains(searchQuery)
-                                                || a.LastName.Contains(searchQuery));
+                    || a.FirstName.Contains(searchQuery)
+                    || a.LastName.Contains(searchQuery));
             }
 
-            if(!string.IsNullOrWhiteSpace(authorsResourceParameters.OrderBy))
+            if (!string.IsNullOrWhiteSpace(authorsResourceParameters.OrderBy))
             {
-                if(authorsResourceParameters.OrderBy.ToLowerInvariant() == "name")
-                {
-                    collection = collection.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
-                }
+                // get property mapping dictionary
+                var authorPropertyMappingDictionary =
+                    _propertyMappingService.GetPropertyMapping<Models.AuthorDto, Author>();
+
+                collection = collection.ApplySort(authorsResourceParameters.OrderBy,
+                    authorPropertyMappingDictionary);
             }
 
-            return PagedList<Author>.Create(collection, authorsResourceParameters.PageNumber, authorsResourceParameters.PageSize);
+            return PagedList<Author>.Create(collection,
+                authorsResourceParameters.PageNumber,
+                authorsResourceParameters.PageSize);
         }
 
         public IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds)
@@ -194,7 +200,7 @@ namespace CourseLibrary.API.Services
         {
             if (disposing)
             {
-               // dispose resources when needed
+                // dispose resources when needed
             }
         }
     }
